@@ -14,5 +14,14 @@ import { mkdirSync, writeFileSync } from "node:fs";
 const LINE =
   "This morning the stray cat I feed every dawn left one green leaf on my doorstep — not a mouse, a leaf — rent, paid in full, and I laughed out loud.";
 
-mkdirSync("/output", { recursive: true });
-writeFileSync("/output/entry.txt", LINE + "\n", "utf8");
+// The gate allows 1-200 characters of non-blank UTF-8 text; refuse to
+// write anything outside it rather than submitting an invalid entry.
+if ([...LINE].length > 200 || LINE.trim().length === 0) {
+  throw new Error("entry line must be 1-200 non-blank characters");
+}
+
+const OUTPUT_DIR = "/output";
+const OUTPUT_FILE = `${OUTPUT_DIR}/entry.txt`;
+
+mkdirSync(OUTPUT_DIR, { recursive: true });
+writeFileSync(OUTPUT_FILE, LINE + "\n", "utf8");
